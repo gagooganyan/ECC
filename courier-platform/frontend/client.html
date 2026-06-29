@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CourierPlatform — Клиент</title>
+  <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+<div class="app-layout">
+  <!-- Sidebar -->
+  <nav class="sidebar">
+    <div class="logo">📦 CourierPlatform</div>
+    <a href="#" class="active" onclick="showSection('orders')">🧾 Мои заказы</a>
+    <a href="#" onclick="showSection('new-order')">➕ Новый заказ</a>
+    <a href="#" onclick="showSection('businesses')">🏪 Заведения</a>
+    <a href="#" style="margin-top:auto" onclick="logout()">🚪 Выйти</a>
+    <div style="font-size:.75rem;color:#475569;padding:.5rem">
+      Вы: <span id="user-name">—</span>
+    </div>
+  </nav>
+
+  <main class="main">
+    <div id="alert-global" class="alert hidden"></div>
+
+    <!-- My orders -->
+    <section id="section-orders">
+      <div class="page-header">
+        <h2>Мои заказы</h2>
+        <button class="btn btn-outline btn-sm" onclick="loadOrders()">↻ Обновить</button>
+      </div>
+      <div id="orders-list"><div class="empty-state"><div class="spinner"></div></div></div>
+    </section>
+
+    <!-- New order -->
+    <section id="section-new-order" class="hidden">
+      <div class="page-header"><h2>Создать заказ</h2></div>
+      <div class="card" style="max-width:600px">
+        <form id="form-order" onsubmit="createOrder(event)">
+          <div class="form-group">
+            <label>Заведение (необязательно)</label>
+            <select id="order-business">
+              <option value="">— частный заказ —</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Адрес забора</label>
+            <input type="text" id="order-pickup" required placeholder="ул. Пушкина, 1">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Широта (pickup)</label>
+              <input type="number" id="order-pickup-lat" step="any" placeholder="55.7558">
+            </div>
+            <div class="form-group">
+              <label>Долгота (pickup)</label>
+              <input type="number" id="order-pickup-lng" step="any" placeholder="37.6173">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Адрес доставки</label>
+            <input type="text" id="order-delivery" required placeholder="ул. Ленина, 5">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Широта (delivery)</label>
+              <input type="number" id="order-delivery-lat" step="any" placeholder="55.7515">
+            </div>
+            <div class="form-group">
+              <label>Долгота (delivery)</label>
+              <input type="number" id="order-delivery-lng" step="any" placeholder="37.6194">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Описание груза</label>
+            <textarea id="order-desc" required placeholder="Пицца Маргарита 2 шт., Cola 1L"></textarea>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Вес (кг)</label>
+              <input type="number" id="order-weight" step="0.1" min="0" placeholder="1.5">
+            </div>
+            <div class="form-group">
+              <label>Оплата</label>
+              <select id="order-payment">
+                <option value="cash">Наличными</option>
+                <option value="card">Картой</option>
+                <option value="wallet">Кошелёк</option>
+              </select>
+            </div>
+          </div>
+          <div id="price-preview" class="alert" style="background:#eff6ff;color:#1e40af;display:none">
+            Примерная стоимость: <strong id="price-val">—</strong>
+          </div>
+          <button class="btn btn-primary btn-block" type="submit">Создать заказ</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- Businesses -->
+    <section id="section-businesses" class="hidden">
+      <div class="page-header">
+        <h2>Заведения</h2>
+        <button class="btn btn-outline btn-sm" onclick="showAddBiz()">+ Добавить</button>
+      </div>
+      <div id="biz-list"></div>
+    </section>
+  </main>
+</div>
+
+<!-- Rate modal -->
+<div id="rate-modal" class="modal-overlay hidden">
+  <div class="modal">
+    <div class="modal-title">Оцените курьера</div>
+    <div class="form-group">
+      <label>Оценка</label>
+      <select id="rate-score">
+        <option value="5">⭐⭐⭐⭐⭐ Отлично</option>
+        <option value="4">⭐⭐⭐⭐ Хорошо</option>
+        <option value="3">⭐⭐⭐ Нормально</option>
+        <option value="2">⭐⭐ Плохо</option>
+        <option value="1">⭐ Ужасно</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Комментарий</label>
+      <textarea id="rate-comment" placeholder="Необязательно"></textarea>
+    </div>
+    <input type="hidden" id="rate-order-id">
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeRate()">Отмена</button>
+      <button class="btn btn-primary" onclick="submitRate()">Отправить</button>
+    </div>
+  </div>
+</div>
+
+<script src="/js/api.js"></script>
+<script src="/js/client.js"></script>
+</body>
+</html>

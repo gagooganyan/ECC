@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CourierPlatform — Курьер</title>
+  <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+<div class="app-layout">
+  <nav class="sidebar">
+    <div class="logo">🛵 Курьер</div>
+    <a href="#" class="active" onclick="showSection('available')">📋 Доступные заказы</a>
+    <a href="#" onclick="showSection('my-orders')">📦 Мои заказы</a>
+    <a href="#" onclick="showSection('profile')">👤 Профиль</a>
+    <a href="#" style="margin-top:auto" onclick="logout()">🚪 Выйти</a>
+    <div style="font-size:.75rem;color:#475569;padding:.5rem">
+      <span id="user-name">—</span>
+    </div>
+  </nav>
+
+  <main class="main">
+    <div id="alert-global" class="alert hidden"></div>
+
+    <!-- Available orders -->
+    <section id="section-available">
+      <div class="page-header">
+        <h2>Доступные заказы</h2>
+        <div style="display:flex;gap:.75rem;align-items:center">
+          <label style="font-size:.83rem;color:var(--muted)">Статус:</label>
+          <div class="status-toggle">
+            <button id="btn-offline" onclick="setStatus('offline')">Офлайн</button>
+            <button id="btn-available" onclick="setStatus('available')">Онлайн</button>
+            <button id="btn-busy" onclick="setStatus('busy')">Занят</button>
+          </div>
+          <button class="btn btn-outline btn-sm" onclick="loadAvailable()">↻</button>
+        </div>
+      </div>
+      <div id="available-list"><div class="empty-state"><div class="spinner"></div></div></div>
+    </section>
+
+    <!-- My active orders -->
+    <section id="section-my-orders" class="hidden">
+      <div class="page-header">
+        <h2>Мои заказы</h2>
+        <button class="btn btn-outline btn-sm" onclick="loadMyOrders()">↻ Обновить</button>
+      </div>
+      <div id="my-orders-list"></div>
+    </section>
+
+    <!-- Profile -->
+    <section id="section-profile" class="hidden">
+      <div class="page-header"><h2>Мой профиль</h2></div>
+      <div class="card" style="max-width:460px">
+        <div id="profile-info">загружаем…</div>
+        <div style="margin-top:1.25rem">
+          <label>Тип транспорта</label>
+          <select id="vehicle-select" onchange="updateVehicle()" style="margin-top:.35rem">
+            <option value="foot">🚶 Пешком</option>
+            <option value="bike">🚴 Велосипед</option>
+            <option value="moto">🛵 Мотоцикл</option>
+            <option value="car">🚗 Автомобиль</option>
+          </select>
+        </div>
+        <div style="margin-top:1.25rem">
+          <label>GPS (вручную)</label>
+          <div class="form-row" style="margin-top:.35rem">
+            <input type="number" id="manual-lat" step="any" placeholder="Широта">
+            <input type="number" id="manual-lng" step="any" placeholder="Долгота">
+          </div>
+          <button class="btn btn-outline btn-sm" style="margin-top:.5rem" onclick="sendManualLocation()">Обновить позицию</button>
+          <button class="btn btn-primary btn-sm" style="margin-top:.5rem;margin-left:.5rem" onclick="useGPS()">📡 Использовать GPS</button>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script src="/js/api.js"></script>
+<script src="/js/courier.js"></script>
+</body>
+</html>

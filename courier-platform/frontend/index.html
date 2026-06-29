@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CourierPlatform — Вход</title>
+  <link rel="stylesheet" href="/css/app.css">
+  <style>
+    .tabs { display: flex; gap: 0; margin-bottom: 1.5rem; border: 1.5px solid var(--border); border-radius: 8px; overflow: hidden; }
+    .tabs button { flex: 1; padding: .6rem; background: transparent; border: none; cursor: pointer; font-size: .9rem; font-weight: 500; transition: all .15s; }
+    .tabs button.active { background: var(--primary); color: #fff; }
+  </style>
+</head>
+<body>
+<div class="auth-wrap">
+  <div class="auth-card">
+    <h1>🚀 CourierPlatform</h1>
+    <p>Платформа быстрой доставки</p>
+
+    <div class="tabs">
+      <button id="tab-login" class="active" onclick="showTab('login')">Войти</button>
+      <button id="tab-register" onclick="showTab('register')">Регистрация</button>
+    </div>
+
+    <div id="alert" class="alert alert-error hidden"></div>
+
+    <!-- Login -->
+    <form id="form-login" onsubmit="doLogin(event)">
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="login-email" required placeholder="you@example.com">
+      </div>
+      <div class="form-group">
+        <label>Пароль</label>
+        <input type="password" id="login-password" required placeholder="••••••••">
+      </div>
+      <button class="btn btn-primary btn-block" type="submit">Войти</button>
+    </form>
+
+    <!-- Register -->
+    <form id="form-register" class="hidden" onsubmit="doRegister(event)">
+      <div class="form-group">
+        <label>Имя</label>
+        <input type="text" id="reg-name" required placeholder="Иван Иванов">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="reg-email" required placeholder="you@example.com">
+        </div>
+        <div class="form-group">
+          <label>Телефон</label>
+          <input type="tel" id="reg-phone" placeholder="+7 900 000 0000">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Пароль</label>
+        <input type="password" id="reg-password" required placeholder="минимум 6 символов">
+      </div>
+      <div class="form-group">
+        <label>Зарегистрироваться как</label>
+        <select id="reg-role">
+          <option value="client">Клиент (заказываю доставку)</option>
+          <option value="courier-later">Курьер (буду доставлять)</option>
+        </select>
+      </div>
+      <button class="btn btn-primary btn-block" type="submit">Создать аккаунт</button>
+    </form>
+  </div>
+</div>
+
+<script src="/js/api.js"></script>
+<script>
+function showTab(tab) {
+  document.getElementById('form-login').classList.toggle('hidden', tab !== 'login');
+  document.getElementById('form-register').classList.toggle('hidden', tab !== 'register');
+  document.getElementById('tab-login').classList.toggle('active', tab === 'login');
+  document.getElementById('tab-register').classList.toggle('active', tab === 'register');
+  hideAlert();
+}
+
+function showAlert(msg) {
+  const el = document.getElementById('alert');
+  el.textContent = msg;
+  el.classList.remove('hidden');
+}
+function hideAlert() {
+  document.getElementById('alert').classList.add('hidden');
+}
+
+function redirect(role) {
+  window.location.href = role === 'courier' ? '/courier.html' : '/client.html';
+}
+
+async function doLogin(e) {
+  e.preventDefault();
+  hideAlert();
+  try {
+    const { user, token } = await api.login({
+      email: document.getElementById('login-email').value,
+      password: document.getElementById('login-password').value
+    });
+    localStorage.setItem('token', token);
+    localStorage.setItem('user', JSON.stringify(user));
+    redirect(user.role);
+  } catch (err) {
+    showAlert(err.message);
+  }
+}
+
+async function doRegister(e) {
+  e.preventDefault();
+  hideAlert();
+  const wantCourier = document.getElementById('reg-role').value === 'courier-later';
+  try {
+    const { user, token } = await api.register({
+      name: document.getElementById('reg-name').value,
+      email: document.getElementById('reg-email').value,
+      password: document.getElementById('reg-password').value,
+      phone: document.getElementById('reg-phone').value || undefined
+    });
+    localStorage.setItem('token', token);
+    localStorage.setItem('user', JSON.stringify(user));
+
+    if (wantCourier) {
+      await api.registerCourier({ vehicle_type: 'foot' });
+      const updated = await api.me();
+      localStorage.setItem('user', JSON.stringify(updated));
+      redirect('courier');
+    } else {
+      redirect('client');
+    }
+  } catch (err) {
+    showAlert(err.message);
+  }
+}
+
+// Auto-redirect if already logged in
+(function() {
+  const token = localStorage.getItem('token');
+  const user = JSON.parse(localStorage.getItem('user') || 'null');
+  if (token && user) redirect(user.role);
+})();
+</script>
+</body>
+</html>
