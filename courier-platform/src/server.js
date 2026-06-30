@@ -15,6 +15,7 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/couriers', require('./routes/couriers'));
 app.use('/api/orders', require('./routes/orders'));
 app.use('/api/businesses', require('./routes/businesses'));
+app.use('/api/tasks', require('./routes/tasks'));
 
 // Health check
 app.get('/api/health', (req, res) => res.json({ status: 'ok' }));

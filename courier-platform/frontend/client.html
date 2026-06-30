@@ -10,9 +10,11 @@
 <div class="app-layout">
   <!-- Sidebar -->
   <nav class="sidebar">
-    <div class="logo">📦 CourierPlatform</div>
-    <a href="#" class="active" onclick="showSection('orders')">🧾 Мои заказы</a>
-    <a href="#" onclick="showSection('new-order')">➕ Новый заказ</a>
+    <div class="logo">📦 КропДоставка</div>
+    <a href="#" class="active" onclick="showSection('orders')">🧾 Мои доставки</a>
+    <a href="#" onclick="showSection('new-order')">➕ Новая доставка</a>
+    <a href="#" onclick="showSection('tasks')">📋 Мои задания</a>
+    <a href="#" onclick="showSection('new-task')">🔨 Новое задание</a>
     <a href="#" onclick="showSection('businesses')">🏪 Заведения</a>
     <a href="#" style="margin-top:auto" onclick="logout()">🚪 Выйти</a>
     <div style="font-size:.75rem;color:#475569;padding:.5rem">
@@ -97,6 +99,85 @@
       </div>
     </section>
 
+    <!-- My tasks -->
+    <section id="section-tasks" class="hidden">
+      <div class="page-header">
+        <h2>Мои задания</h2>
+        <button class="btn btn-outline btn-sm" onclick="loadTasks()">↻ Обновить</button>
+      </div>
+      <div id="tasks-list"></div>
+    </section>
+
+    <!-- New task -->
+    <section id="section-new-task" class="hidden">
+      <div class="page-header"><h2>Разместить задание</h2></div>
+      <div class="card" style="max-width:600px">
+        <form id="form-task" onsubmit="createTask(event)">
+          <div class="form-group">
+            <label>Категория</label>
+            <select id="task-category">
+              <option value="construction">🔨 Строительство / ремонт</option>
+              <option value="cleaning">🧹 Уборка</option>
+              <option value="moving">📦 Переезд / перенос</option>
+              <option value="garden">🌱 Дача / огород</option>
+              <option value="driving">🚗 Водитель / поездка</option>
+              <option value="errands">📋 Очереди / поручения</option>
+              <option value="assembly">🪛 Сборка мебели / техники</option>
+              <option value="animals">🐾 Помощь с животными</option>
+              <option value="shopping">🛒 Шоппинг / закупка</option>
+              <option value="other">💬 Другое</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Заголовок</label>
+            <input type="text" id="task-title" required maxlength="120"
+              placeholder="Помочь разгрузить кирпич, 2–3 часа">
+          </div>
+          <div class="form-group">
+            <label>Описание</label>
+            <textarea id="task-desc" required
+              placeholder="Подробно опишите что нужно сделать, когда, какие требования к исполнителю"></textarea>
+          </div>
+          <div class="form-group">
+            <label>Адрес</label>
+            <input type="text" id="task-address" required placeholder="ул. Ленина 12, Кропоткин">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Тип оплаты</label>
+              <select id="task-price-type" onchange="toggleDuration()">
+                <option value="fixed">Фиксированная цена</option>
+                <option value="hourly">За час</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Сумма (₽)</label>
+              <input type="number" id="task-price" required min="50" step="50" placeholder="1500">
+            </div>
+          </div>
+          <div class="form-group" id="duration-group">
+            <label>Количество часов</label>
+            <input type="number" id="task-duration" min="0.5" max="24" step="0.5" placeholder="3">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Когда (необязательно)</label>
+              <input type="datetime-local" id="task-scheduled">
+            </div>
+            <div class="form-group">
+              <label>Оплата</label>
+              <select id="task-payment">
+                <option value="cash">Наличными</option>
+                <option value="card">Картой</option>
+                <option value="wallet">Кошелёк</option>
+              </select>
+            </div>
+          </div>
+          <button class="btn btn-primary btn-block" type="submit">Разместить задание</button>
+        </form>
+      </div>
+    </section>
+
     <!-- Businesses -->
     <section id="section-businesses" class="hidden">
       <div class="page-header">
@@ -106,6 +187,18 @@
       <div id="biz-list"></div>
     </section>
   </main>
+</div>
+
+<!-- Responses modal -->
+<div id="responses-modal" class="modal-overlay hidden">
+  <div class="modal" style="max-width:580px">
+    <div class="modal-title">Отклики исполнителей</div>
+    <div id="responses-list"></div>
+    <input type="hidden" id="resp-task-id">
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeResponses()">Закрыть</button>
+    </div>
+  </div>
 </div>
 
 <!-- Rate modal -->
@@ -136,5 +229,6 @@
 
 <script src="/js/api.js"></script>
 <script src="/js/client.js"></script>
+<script src="/js/client-tasks.js"></script>
 </body>
 </html>

@@ -47,7 +47,21 @@ const api = {
 
   // businesses
   listBusinesses: () => api.get('/businesses'),
-  createBusiness: (data) => api.post('/businesses', data)
+  createBusiness: (data) => api.post('/businesses', data),
+
+  // tasks
+  createTask: (data) => api.post('/tasks', data),
+  myTasks: () => api.get('/tasks/my'),
+  myWork: () => api.get('/tasks/my-work'),
+  openTasks: (category) => api.get('/tasks/open' + (category ? `?category=${category}` : '')),
+  taskById: (id) => api.get(`/tasks/${id}`),
+  respondTask: (id, data) => api.post(`/tasks/${id}/respond`, data),
+  taskResponses: (id) => api.get(`/tasks/${id}/responses`),
+  assignWorker: (task_id, worker_id) => api.post(`/tasks/${task_id}/assign/${worker_id}`),
+  updateTaskStatus: (id, status) => api.put(`/tasks/${id}/status`, { status }),
+  rateTask: (id, score, comment) => api.post(`/tasks/${id}/rate`, { score, comment }),
+  setSkills: (skills) => api.put('/tasks/skills', { skills }),
+  mySkills: () => api.get('/tasks/skills/my')
 };
 
 window.api = api;

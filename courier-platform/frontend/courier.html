@@ -9,9 +9,11 @@
 <body>
 <div class="app-layout">
   <nav class="sidebar">
-    <div class="logo">🛵 Курьер</div>
-    <a href="#" class="active" onclick="showSection('available')">📋 Доступные заказы</a>
-    <a href="#" onclick="showSection('my-orders')">📦 Мои заказы</a>
+    <div class="logo">🛵 КропДоставка</div>
+    <a href="#" class="active" onclick="showSection('available')">📋 Доставки</a>
+    <a href="#" onclick="showSection('open-tasks')">🔨 Задания</a>
+    <a href="#" onclick="showSection('my-orders')">📦 Мои доставки</a>
+    <a href="#" onclick="showSection('my-tasks')">✅ Мои задания</a>
     <a href="#" onclick="showSection('profile')">👤 Профиль</a>
     <a href="#" style="margin-top:auto" onclick="logout()">🚪 Выйти</a>
     <div style="font-size:.75rem;color:#475569;padding:.5rem">
@@ -76,7 +78,38 @@
   </main>
 </div>
 
+    <!-- Open tasks -->
+    <section id="section-open-tasks" class="hidden">
+      <div class="page-header">
+        <h2>Доступные задания</h2>
+        <select id="task-filter" onchange="loadOpenTasks()" style="padding:.4rem .75rem;border:1.5px solid var(--border);border-radius:7px;font-size:.85rem">
+          <option value="">Все категории</option>
+          <option value="construction">🔨 Строительство</option>
+          <option value="cleaning">🧹 Уборка</option>
+          <option value="moving">📦 Переезд</option>
+          <option value="garden">🌱 Дача/огород</option>
+          <option value="driving">🚗 Водитель</option>
+          <option value="errands">📋 Поручения</option>
+          <option value="assembly">🪛 Сборка</option>
+          <option value="animals">🐾 Животные</option>
+          <option value="shopping">🛒 Шоппинг</option>
+          <option value="other">💬 Другое</option>
+        </select>
+      </div>
+      <div id="open-tasks-list"></div>
+    </section>
+
+    <!-- My tasks as worker -->
+    <section id="section-my-tasks" class="hidden">
+      <div class="page-header">
+        <h2>Мои задания</h2>
+        <button class="btn btn-outline btn-sm" onclick="loadMyTasks()">↻</button>
+      </div>
+      <div id="my-tasks-list"></div>
+    </section>
+
 <script src="/js/api.js"></script>
 <script src="/js/courier.js"></script>
+<script src="/js/courier-tasks.js"></script>
 </body>
 </html>
